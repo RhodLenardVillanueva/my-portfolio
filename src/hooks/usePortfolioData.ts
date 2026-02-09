@@ -342,6 +342,7 @@ export function useTechCategories() {
               icon: getIcon(cat.icon_name),
               gradient: `from-${cat.gradient_from} to-${cat.gradient_to}`,
               techs: cat.technologies || [],
+              order: cat.order ?? 0,
             })),
           );
         }

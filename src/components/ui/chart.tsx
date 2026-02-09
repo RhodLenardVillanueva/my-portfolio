@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import * as RechartsPrimitive from "recharts@2.15.2";
+import * as RechartsPrimitive from "recharts";
 
 import { cn } from "./utils";
 
@@ -118,14 +118,21 @@ function ChartTooltipContent({
   color,
   nameKey,
   labelKey,
-}: React.ComponentProps<typeof RechartsPrimitive.Tooltip> &
-  React.ComponentProps<"div"> & {
-    hideLabel?: boolean;
-    hideIndicator?: boolean;
-    indicator?: "line" | "dot" | "dashed";
-    nameKey?: string;
-    labelKey?: string;
-  }) {
+}: {
+  active?: boolean;
+  payload?: any[];
+  className?: string;
+  indicator?: "line" | "dot" | "dashed";
+  hideLabel?: boolean;
+  hideIndicator?: boolean;
+  label?: any;
+  labelFormatter?: any;
+  labelClassName?: string;
+  formatter?: any;
+  color?: string;
+  nameKey?: string;
+  labelKey?: string;
+}) {
   const { config } = useChart();
 
   const tooltipLabel = React.useMemo(() => {
@@ -256,14 +263,15 @@ function ChartLegendContent({
   payload,
   verticalAlign = "bottom",
   nameKey,
-}: React.ComponentProps<"div"> &
-  Pick<RechartsPrimitive.LegendProps, "payload" | "verticalAlign"> & {
+  }: React.ComponentProps<"div"> & {
+    payload?: RechartsPrimitive.LegendPayload[];
+    verticalAlign?: "top" | "bottom" | "middle";
     hideIcon?: boolean;
     nameKey?: string;
   }) {
   const { config } = useChart();
 
-  if (!payload?.length) {
+  if (!payload || !Array.isArray(payload) || payload.length === 0) {
     return null;
   }
 
@@ -275,7 +283,7 @@ function ChartLegendContent({
         className,
       )}
     >
-      {payload.map((item) => {
+      {payload.map((item: RechartsPrimitive.LegendPayload) => {
         const key = `${nameKey || item.dataKey || "value"}`;
         const itemConfig = getPayloadConfigFromPayload(config, item, key);
 
