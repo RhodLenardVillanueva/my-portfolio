@@ -88,10 +88,10 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1.2 }}
-          className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center"
+          className="relative flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center pb-20"
         >
           <motion.button
-            className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full font-medium relative overflow-hidden group"
+            className="w-full sm:w-[220px] px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full font-medium relative overflow-hidden group"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() =>
@@ -104,7 +104,7 @@ export function HeroSection() {
             <motion.div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity" />
           </motion.button>
           <motion.button
-            className="w-full sm:w-auto px-8 py-4 border border-indigo-500 rounded-full font-medium hover:bg-indigo-500/10 transition-colors"
+            className="w-full sm:w-[220px] px-8 py-4 border border-indigo-500 rounded-full font-medium hover:bg-indigo-500/10 transition-colors"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() =>
@@ -115,19 +115,19 @@ export function HeroSection() {
           >
             Contact Me
           </motion.button>
-        </motion.div>
 
-        {/* Scroll indicator - CSS animation for performance */}
-        <motion.div
-          className="absolute -bottom-20 left-1/2 transform -translate-x-1/2"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1.5 }}
-        >
-          <div className="text-gray-500 text-sm flex flex-col items-center gap-2 animate-bounce-slow">
-            <span className="text-xs tracking-wider">SCROLL</span>
-            <div className="w-[1px] h-12 bg-gradient-to-b from-indigo-500 to-transparent" />
-          </div>
+          {/* Scroll indicator - anchored to buttons */}
+          <motion.div
+            className="absolute bottom-0 left-1/2 -translate-x-1/2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 1.5 }}
+          >
+            <div className="text-gray-500 text-sm flex flex-col items-center gap-2 animate-bounce-slow">
+              <span className="text-xs tracking-wider">SCROLL</span>
+              <div className="w-[1px] h-12 bg-gradient-to-b from-indigo-500 to-transparent" />
+            </div>
+          </motion.div>
         </motion.div>
       </motion.div>
     </div>
