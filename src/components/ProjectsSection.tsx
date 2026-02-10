@@ -8,6 +8,7 @@ import {
 import { ExternalLink, Github } from "lucide-react";
 import { useCallback, useRef, useState } from "react";
 import { useProjects } from "../hooks/usePortfolioData";
+import { useIsMobile } from "./ui/use-mobile";
 
 export function ProjectsSection() {
   const { data: projects } = useProjects();
@@ -16,6 +17,7 @@ export function ProjectsSection() {
   const isInView = useInView(projectsRef, { once: true, amount: 0.1 });
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const prefersReducedMotion = useReducedMotion();
+  const isMobile = useIsMobile();
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -65,21 +67,24 @@ export function ProjectsSection() {
 
           {/* Projects grid */}
           <div ref={projectsRef} className="grid md:grid-cols-2 gap-8">
-            {projects.map((project, index) => (
-              <motion.div
-                key={index}
-                className="group relative will-change-transform transform-gpu"
-                initial={{ opacity: 0, y: 50 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, delay: index * 0.15 }}
-                onMouseEnter={() => handleMouseEnter(index)}
-                onMouseLeave={handleMouseLeave}
-              >
+            {projects.map((project, index) => {
+              const isProjectActive = hoveredIndex === index || isMobile;
+
+              return (
                 <motion.div
-                  className="relative h-[320px] sm:h-[360px] md:h-[400px] bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl overflow-hidden border border-gray-700"
-                  whileHover={{ scale: prefersReducedMotion ? 1 : 1.02 }}
-                  transition={{ duration: 0.2 }}
+                  key={index}
+                  className="group relative will-change-transform transform-gpu"
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={isInView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.6, delay: index * 0.15 }}
+                  onMouseEnter={() => handleMouseEnter(index)}
+                  onMouseLeave={handleMouseLeave}
                 >
+                  <motion.div
+                    className="relative min-h-[320px] sm:h-[360px] md:h-[400px] bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl overflow-hidden border border-gray-700"
+                    whileHover={{ scale: prefersReducedMotion ? 1 : 1.02 }}
+                    transition={{ duration: 0.2 }}
+                  >
                   {/* Project image placeholder with gradient */}
                   <div
                     className={`absolute inset-0 bg-gradient-to-br ${project.gradient} opacity-20`}
@@ -87,7 +92,7 @@ export function ProjectsSection() {
 
                   {/* Animated grid overlay - using CSS animation */}
                   <div
-                    className={`absolute inset-0 opacity-10 ${hoveredIndex === index ? "animate-grid-scroll" : ""}`}
+                    className={`absolute inset-0 opacity-10 ${isProjectActive ? "animate-grid-scroll" : ""}`}
                     style={{
                       backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
                                        linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
@@ -96,7 +101,7 @@ export function ProjectsSection() {
                   />
 
                   {/* Content overlay */}
-                  <div className="relative h-full p-8 flex flex-col justify-between">
+                  <div className="relative h-full p-6 sm:p-8 flex flex-col justify-between">
                     <div>
                       <motion.div
                         className="text-sm text-indigo-400 mb-3 tracking-wide"
@@ -107,7 +112,7 @@ export function ProjectsSection() {
                         {project.category}
                       </motion.div>
                       <motion.h3
-                        className="text-3xl font-bold text-white mb-4"
+                        className="text-2xl sm:text-3xl font-bold text-white mb-4"
                         initial={{ opacity: 0, x: -20 }}
                         animate={isInView ? { opacity: 1, x: 0 } : {}}
                         transition={{ duration: 0.5, delay: index * 0.2 + 0.4 }}
@@ -145,10 +150,10 @@ export function ProjectsSection() {
 
                       {/* Action buttons */}
                       <motion.div
-                        className="flex gap-4 relative z-20"
+                        className="flex flex-wrap gap-3 sm:gap-4 relative z-20"
                         initial={{ opacity: 0, y: 20 }}
                         animate={
-                          hoveredIndex === index
+                          isProjectActive
                             ? { opacity: 1, y: 0 }
                             : { opacity: 0, y: 20 }
                         }
@@ -159,7 +164,6 @@ export function ProjectsSection() {
                           onClick={(e) => {
                             e.stopPropagation();
                             const url = project.liveUrl;
-                            console.log("View Live clicked, URL:", url);
                             if (url && url !== "#" && url.trim() !== "") {
                               window.open(url, "_blank", "noopener,noreferrer");
                             } else {
@@ -178,7 +182,6 @@ export function ProjectsSection() {
                           onClick={(e) => {
                             e.stopPropagation();
                             const url = project.githubUrl;
-                            console.log("Code clicked, URL:", url);
                             if (url && url !== "#" && url.trim() !== "") {
                               window.open(url, "_blank", "noopener,noreferrer");
                             } else {
@@ -198,16 +201,17 @@ export function ProjectsSection() {
 
                   {/* Glow effect on hover - simplified */}
                   <div
-                    className={`absolute inset-0 bg-gradient-to-br ${project.gradient} blur-xl transition-opacity duration-300 pointer-events-none ${hoveredIndex === index ? "opacity-20" : "opacity-0"}`}
+                    className={`absolute inset-0 bg-gradient-to-br ${project.gradient} blur-xl transition-opacity duration-300 pointer-events-none ${isProjectActive ? "opacity-20" : "opacity-0"}`}
+                  />
+                  </motion.div>
+
+                  {/* 3D effect shadow - simplified with CSS transition */}
+                  <div
+                    className={`absolute inset-0 bg-gradient-to-br ${project.gradient} blur-2xl -z-10 rounded-3xl transition-all duration-300 ${isProjectActive ? "opacity-20 scale-105 translate-y-2" : "opacity-0 scale-100 translate-y-0"}`}
                   />
                 </motion.div>
-
-                {/* 3D effect shadow - simplified with CSS transition */}
-                <div
-                  className={`absolute inset-0 bg-gradient-to-br ${project.gradient} blur-2xl -z-10 rounded-3xl transition-all duration-300 ${hoveredIndex === index ? "opacity-20 scale-105 translate-y-2" : "opacity-0 scale-100 translate-y-0"}`}
-                />
-              </motion.div>
-            ))}
+              );
+            })}
           </div>
 
           {/* View all projects CTA */}
